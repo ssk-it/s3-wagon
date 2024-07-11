@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>fr.sskit.maven.wagon</groupId>
+  <artifactId>wagon-s3</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+
+  <name>Apache Maven Wagon :: Providers :: S3 Provider</name>
+  <description>Wagon provider that gets and puts artefacts through AWS S3</description>
+
+  <url>https://github.com/ssk-it/s3-wagon.git</url>
+
+  <licenses>
+    <license>
+      <name>Zero-Clause BSD</name>
+      <url>https://opensource.org/licenses/0BSD</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <properties>
+    <java.version>18</java.version>
+    <aws.sdk.version>2.26.10</aws.sdk.version>
+    <jacoco.version>0.8.7</jacoco.version>
+    <maven.compiler.version>3.8.1</maven.compiler.version>
+    <maven.enforcer.version>3.0.0</maven.enforcer.version>
+    <maven.gpg.version>1.6</maven.gpg.version>
+    <maven.install.version>2.5.2</maven.install.version>
+    <maven.jar.version>3.2.0</maven.jar.version>
+    <maven.javadoc.version>3.3.1</maven.javadoc.version>
+    <maven.release.version>2.5.3</maven.release.version>
+    <maven.resources.version>3.2.0</maven.resources.version>
+    <maven.shade.version>3.2.4</maven.shade.version>
+    <maven.source.version>3.2.1</maven.source.version>
+    <maven.surefire.version>2.22.2</maven.surefire.version>
+    <spotbugs.version>4.5.2</spotbugs.version>
+    <spotbugs.maven.version>4.5.0.0</spotbugs.maven.version>
+    <versions.version>2.8.1</versions.version>
+    <wagon.version>3.4.3</wagon.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven-plugin-api.version>3.9.8</maven-plugin-api.version>
+    <maven-plugin-annotations.version>3.13.1</maven-plugin-annotations.version>
+    <lombok.version>1.18.30</lombok.version>
+  </properties>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  <scm>
+    <connection>scm:git:git://github.com:ssk-it/s3-wagon.git</connection>
+    <developerConnection>scm:git:git@github.com:ssk-it/s3-wagon.git</developerConnection>
+    <url>https://github.com/ssk-it/s3-wagon</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <inceptionYear>2019</inceptionYear>
+
+  <developers>
+    <developer>
+      <id>sskorupski</id>
+      <name>Sébastien Skorupski</name>
+      <email>sebastien.skorupski+github@gmail.com</email>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <!-- AWS -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+      <version>${aws.sdk.version}</version>
+    </dependency>
+
+    <!-- Wagon -->
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-provider-api</artifactId>
+      <version>${wagon.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven-plugin-api.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>${maven-plugin-annotations.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven.enforcer.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-java</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[11.0.0,)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.5.2,)</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>default-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-prepare-agent-integration</id>
+            <goals>
+              <goal>prepare-agent-integration</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>default-report-integration</id>
+            <goals>
+              <goal>report-integration</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven.resources.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.version}</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+            <arg>-Werror</arg>
+          </compilerArgs>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.version}</version>
+        <configuration>
+          <includes>
+            <include>**/*Test.*</include>
+          </includes>
+          <useFile>false</useFile>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven.jar.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${maven.source.version}</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>${maven.install.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${maven.release.version}</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <goals>deploy</goals>
+          <useReleaseProfile>false</useReleaseProfile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -65,8 +65,8 @@ Add this to the build section of a pom:
       <extensions>
         <extension>
           <groupId>fr.sskit.maven.wagon</groupId>
-          <artifactId>wagon-s3</artifactId>
-          <version>1.0.0</version>
+          <artifactId>s3-wagon</artifactId>
+          <version>1.0.1-RELEASE</version>
        </extension>
       </extensions>
     </build>

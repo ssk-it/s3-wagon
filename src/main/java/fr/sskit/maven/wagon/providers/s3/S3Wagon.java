@@ -12,6 +12,7 @@ import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
 import org.apache.maven.wagon.authentication.AuthenticationException;
+import org.apache.maven.wagon.authorization.AuthorizationException;
 import org.apache.maven.wagon.events.TransferEvent;
 import org.apache.maven.wagon.resource.Resource;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -199,5 +200,20 @@ public final class S3Wagon extends AbstractWagon {
     final String separator = "/";
     final String prefix = baseDir.startsWith(separator) ? baseDir.substring(1) : baseDir;
     return prefix.endsWith(separator) ? prefix : String.format("%s/", prefix);
+  }
+
+  @Override
+  public boolean resourceExists(String resourceName) {
+    final String key = String.join("", prefix, resourceName);
+    try {
+      s3.headObject(HeadObjectRequest
+          .builder()
+          .bucket(bucket)
+          .key(key)
+          .build());
+      return true;
+    } catch (final NoSuchKeyException nske) {
+      return false;
+    }
   }
 }
